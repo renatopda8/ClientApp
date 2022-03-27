@@ -1,0 +1,87 @@
+﻿@using ClientApp.Services.Ibge
+@model ClientApp.Models.Client
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Client</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Age" class="control-label"></label>
+                <input asp-for="Age" class="form-control" />
+                <span asp-validation-for="Age" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Gender" class="control-label"></label>
+                <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="form-control">
+                    <option selected="selected" value="">Please select</option>
+                </select>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="State" class="control-label"></label>
+                <select id="statesSelect" asp-for="State" asp-items="(IEnumerable<SelectListItem>) @ViewData["States"]" class="form-control">
+                    <option selected="selected" value="">Please select</option>
+                </select>
+                <span asp-validation-for="State" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="City" class="control-label"></label>
+                <select id="citiesSelect" asp-for="City" class="form-control">
+                    <option selected="selected" value="">Please select</option>
+                </select>
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $("#statesSelect").on("change", function () {
+            var uf = $("#statesSelect").find("option:selected").val();
+
+            $('#citiesSelect').empty();
+            $("#citiesSelect").append('<option value="">Please select</option>');
+            
+            $.ajax(
+            {
+                type: 'GET',
+                url: '/Client/GetCitiesByUf',
+                contentType: "application/json",
+                data: { uf },
+                success: function (data)
+                {
+                    for (var i = 0; i < data.length; i++) {
+                        $("#citiesSelect").append('<option>' + data[i].nome + '</option>');
+                    }
+                },
+                error: function (e)
+                {
+                    alert(e);
+                }
+            });
+        });
+    </script>
+}
