@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using ClientApp.Data;
-using Microsoft.Extensions.Caching.Memory;
 using ClientApp.Services.Ibge;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +10,6 @@ builder.Services.AddDbContext<ClientAppContext>(options =>
 // Add services to the container.
 builder.Services.AddHttpClient();
 builder.Services.AddControllersWithViews();
-//builder.Services.AddSingleton<IMemoryCache>();
 builder.Services.AddSingleton<IIbgeService, IbgeService>();
 
 var app = builder.Build();
